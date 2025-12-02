@@ -4,49 +4,110 @@
 #include <sys/wait.h>
 
 int id;
-int n=10;
+int n=100;
+FILE *fp;
+FILE *fp1;
+FILE *fp2;
 
-void P(){
-    printf("Pere, PID is %d\n", getpid());
-
-    FILE *fp = fopen("numbers.txt", "w");
+void RemplireF(){
+    fp = fopen("numbers.txt", "w");
 
     for (int i = 1; i <= n; i++) {
         fprintf(fp, "%d\n", i);
-        fclose(fp);
+        printf("%d ", i);
     }
+    printf("\n");
+    printf("\n");
+
+    fclose(fp);
 }
 
-void fils_read(int i){
-    printf("fils %d, PID is %d, PID pere %d\n",i ,getpid(),getppid());
-
-    FILE *fp = fopen("numbers.txt", "r");
+void Generer_impair(){
+    fp = fopen("numbers.txt", "r");
+    fp1 = fopen("numbers_impair.txt", "w");
 
     int num;
     while (fscanf(fp, "%d", &num) == 1) {
-        printf("%d\n", num);
+        if(num % 2 == 1){
+            fprintf(fp1, "%d ", num);
+        }
     }
-
+    
     fclose(fp);
+    fclose(fp1);
+    exit(0);
+}
 
+void Generer_pair(){
+    fp = fopen("numbers.txt", "r");
+    fp2 = fopen("numbers_pair.txt", "w");
+
+    int num;
+    while (fscanf(fp, "%d", &num) == 1) {
+        if(num % 2 == 0){
+            fprintf(fp2, "%d ", num);
+        }
+    }
+    
+    fclose(fp);
+    fclose(fp2);
+    exit(0);
+}
+
+void Afficher_impair(){
+    fp1 = fopen("numbers_impair.txt", "r");
+
+    int num;
+    while (fscanf(fp1, "%d", &num) == 1) {
+        printf("p3: %d \n", num);
+        sleep(3);
+    }
+    printf("\n");
+    printf("\n");
+    
+    fclose(fp1);
+    exit(0);
+}
+
+void Afficher_pair(){
+    fp2 = fopen("numbers_pair.txt", "r");
+
+    int num;
+    while (fscanf(fp2, "%d", &num) == 1) {
+        printf("p4: %d \n", num);
+        sleep(2);
+    }
+    printf("\n");
+    printf("\n");
+    
+    fclose(fp2);
     exit(0);
 }
 
 int main(){
     printf("Hello World!\n");
 
-    P();
+    RemplireF();
 
-    for(int i=1; i<=2; i++) {
-        id = fork();
-        if (id == 0) fils(i);
-    }
+    id = fork();
+    if (id == 0) Generer_impair();
 
-    for(int i=1; i<=2; i++) {
-        wait(0);
-    }
+    id = fork();
+    if (id == 0) Generer_pair();
 
-    printf("test\n");
+    wait(0);
+    wait(0);
+
+    id = fork();
+    if (id == 0) Afficher_impair();
+
+    id = fork();
+    if (id == 0) Afficher_pair();
+
+    wait(0);
+    wait(0);
+
+    printf("travail termine\n");
 
     return 0;
 }
