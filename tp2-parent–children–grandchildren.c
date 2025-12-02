@@ -18,7 +18,7 @@ void Fils(int i){
 
     for (int j=1; j<=i; j++){
         id = fork();
-        if (id == 0) PetitFils(i, j);give me like a title 
+        if (id == 0) PetitFils(i, j);
     }
 
     printf("fils %d, PID is %d\n", i, getpid());
